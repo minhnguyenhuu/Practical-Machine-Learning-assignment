@@ -1,26 +1,23 @@
-### Executive Summary
-# One thing that people regularly do is quantify how much of a particular 
-# activity they do, but they rarely quantify how well they do it. Using 
-# devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible 
-# to collect a large amount of data about personal activity relatively 
-# inexpensively. In here we aim to predict how well people perform their 
-# exercise, using he data from the fitness equipment.
+## Executive Summary
+One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. In here we aim to predict how well people perform their exercise, using he data from the fitness equipment.
 
 
-## preparation
-# remove any existing lists and load required packages
+#Preparation
+```
+remove any existing lists and load required packages
 rm(list=ls())
 library(ggplot2)
 library(lattice)
 library(caret)
 library(randomForest)
-# Read data from Cloudfront into R. There are 19622 records
-# in the training set and 20 records in the test set. Both sets
-# have 160 variables
+```
+Read data from Cloudfront into R. There are 19622 records in the training set and 20 records in the test set. Both sets have 160 variables
+```
 data_training=read.csv(file="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv",na.strings= c("NA",""," "))
 data_testing=read.csv(file="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv",na.strings= c("NA",""," "))
 dim(data_training)
 dim(data_testing)
+```
 
 # Remove columns with NAs in the training set to reduce noise for the model.
 data_training00 <- data_training[,colSums(is.na(data_training))==0]
