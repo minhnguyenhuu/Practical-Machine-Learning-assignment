@@ -1,1 +1,70 @@
+### Executive Summary
+# One thing that people regularly do is quantify how much of a particular 
+# activity they do, but they rarely quantify how well they do it. Using 
+# devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible 
+# to collect a large amount of data about personal activity relatively 
+# inexpensively. In here we aim to predict how well people perform their 
+# exercise, using he data from the fitness equipment.
 
+
+## preparation
+# remove any existing lists and load required packages
+rm(list=ls())
+library(ggplot2)
+library(lattice)
+library(caret)
+library(randomForest)
+# Read data from Cloudfront into R. There are 19622 records
+# in the training set and 20 records in the test set. Both sets
+# have 160 variables
+data_training=read.csv(file="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv",na.strings= c("NA",""," "))
+data_testing=read.csv(file="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv",na.strings= c("NA",""," "))
+dim(data_training)
+dim(data_testing)
+
+# Remove columns with NAs in the training set to reduce noise for the model.
+data_training00 <- data_training[,colSums(is.na(data_training))==0]
+data_testing00  <- data_testing[,colSums(is.na(data_testing))==0]
+
+# Remover unique identifiers columns 1 to 7 in the training set.
+data_training_prepared <- data_training00[,-c(1:7)]
+data_testing_prepared <- data_testing00[,-c(1:7)]
+
+# Split the training data into training and cross-validation partitions
+# with a 7:3 ratio. This allows training a model and testing it against 
+# a cross-validation set before running it on the final 20 test cases in the
+# test.csv
+
+inTrain <- createDataPartition(y=data_training_prepared$classe,
+                               p=0.7,list=FALSE)
+training<-data_training_prepared[inTrain,]
+validating<-data_training_prepared[-inTrain,]
+
+## Building a model
+# The Ramdom Forest method is chosen because it is a highly accurate and
+# widely used method for prediction. In addition, classification and 
+# regression trees, which the Random Forest is based on, do not have 
+# the same type of multicollinearity issues like in multiple linear
+# regression. Splits are based on a best chosen split criteria with 
+# the Gini index being the most commonly used one. Thus, there is no need
+# to show a correlation matrix here. We proceed to train the model:
+modelFit<-randomForest(classe~.,  data=training)
+
+##Cross-validation
+pred<-predict(modelFit,validating)
+
+# Determine model accuracy by using the confusion matrix
+confusionMatrix(validating$classe,pred)
+# The model's accuracy is at 99.51%. The model appears robust and perform 
+# well with new data.
+
+##Predictions
+# Perform perdiction the a new data set containing 20 test cases
+
+predTest<- predict(modelFit, data_testing_prepared)
+predTest
+
+##Conclusion
+# Using the Random Forest method and the data provided from fitness 
+# instruments, how well an excercise if performed can be accurately predicted
+# with a relatively straightfoward model
