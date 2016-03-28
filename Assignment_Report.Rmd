@@ -55,7 +55,7 @@ confusionMatrix(validating$classe,pred)
 ```
 The model's accuracy is at 99.51%. The model appears robust and perform well with new data.
 
-##Predictions
+##Prediction
 Perform perdiction the a new data set containing 20 test cases
 ```
 predTest<- predict(modelFit, data_testing_prepared)
